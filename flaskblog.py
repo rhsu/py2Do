@@ -1,6 +1,5 @@
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
-from register_service import RegisterService
 from datetime import datetime
 
 
@@ -48,19 +47,23 @@ def something():
 
 @app.route("/register", methods=['POST'])
 def register():
-    #
-    # TBD import ipdb; ipdb.set_trace()
-    #
-    # import ipdb; ipdb.set_trace()
+    # TODO: make this work later. Need to learn more flask
+    # username = request_json['username']
+    # password = request_json['password']
+    # email = request_json['email']
+    # service = RegisterService(username, password, email)
+    # service.perform()
 
     request_json = request.json
 
-    username = request_json['username']
-    password = request_json['password']
+    new_user = User(
+        username=request_json['username'],
+        password=request_json['password'],
+        email=request_json['email']
+    )
 
-    service = RegisterService(username, password)
-    service.perform()
-
+    db.session.add(new_user)
+    db.session.commit()
     return jsonify(request.json)
 
 
