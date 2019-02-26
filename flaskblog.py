@@ -31,7 +31,7 @@ def register():
     # import ipdb; ipdb.set_trace()
 
     request_json = request.json
-    
+
     username = request_json['username']
     password = request_json['password']
 
