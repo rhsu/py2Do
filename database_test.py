@@ -1,4 +1,5 @@
-from flaskblog import db, User, Post
+from flaskblog import db
+from flaskblog.models import User, Post
 from pdb import set_trace
 
 
