@@ -1,6 +1,6 @@
-from flaskblog import app, db
-from flaskblog.models import User
 from flask import jsonify, request
+from flaskblog import app
+from flaskblog.register_service import RegisterService
 
 
 @app.route("/")
@@ -24,25 +24,15 @@ def something():
 
 @app.route("/register", methods=['POST'])
 def register():
-    # TODO: make this work later. Need to learn more flask
-    # username = request_json['username']
-    # password = request_json['password']
-    # email = request_json['email']
-    # service = RegisterService(username, password, email)
-    # service.perform()
-
     request_json = request.json
-
-    new_user = User(
+    service = RegisterService(
         username=request_json['username'],
         password=request_json['password'],
         email=request_json['email']
     )
 
-    db.session.add(new_user)
-
     try:
-        db.session.commit()
+        service.perform()
     except Exception as e:
         error = {
             "error": str(e)
