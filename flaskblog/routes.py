@@ -2,6 +2,7 @@ from flask import jsonify, request
 from flaskblog import app
 from flaskblog.register_service import RegisterService
 from flaskblog.create_task_service import CreateTaskService
+from flaskblog.delete_task_service import DeleteTaskService
 
 
 @app.route("/register", methods=['POST'])
@@ -29,9 +30,30 @@ def create_task():
     request_json = request.json
     service = CreateTaskService(
         title=request_json['title'],
-        content=request_json['content']
+        content=request_json['content'],
+        status_id=request_json['status_id']
     )
+    new_task = service.perform()
+    status = new_task.status
 
+    response = {
+        'title': new_task.title,
+        'content': new_task.content,
+        'status_id': new_task.status_id,
+        'meta': {
+            'status': {
+                'id': status.id,
+                'title': status.title
+            }
+        }
+    }
+    return jsonify(response)
+
+
+@app.route("/task/<int:task_id>", methods=['DELETE'])
+def delete_task(task_id):
+    service = DeleteTaskService(
+        task_id=task_id
+    )
     service.perform()
-
-    return jsonify(request.json)
+    return jsonify({'success': True})

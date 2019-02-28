@@ -27,3 +27,17 @@ class Task(db.Model):
         db.DateTime, nullable=False, default=datetime.utcnow
     )
     content = db.Column(db.Text, nullable=False)
+    status_id = db.Column(
+        db.Integer,
+        db.ForeignKey('status.id'),
+        nullable=False
+    )
+    status = db.relationship('Status', lazy=True)
+
+
+class Status(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100))
+    date_created = db.Column(
+        db.DateTime, nullable=False, default=datetime.utcnow
+    )

@@ -15,6 +15,6 @@ class RegisterService:
             password=self.password,
             email=self.email
         )
-
         db.session.add(new_user)
         db.session.commit()
+        return new_user
