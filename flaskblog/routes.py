@@ -5,6 +5,14 @@ from flaskblog.create_task_service import CreateTaskService
 from flaskblog.delete_task_service import DeleteTaskService
 
 
+@app.route("/fake", methods=['GET'])
+def fake():
+    ret_val = {
+        "foo": "bar"
+    }
+    return jsonify(ret_val)
+
+
 @app.route("/register", methods=['POST'])
 def register():
     request_json = request.json
