@@ -1,11 +1,11 @@
 from fixture import client, create_default_task
-from flaskblog.database_reset import DatabaseReset
+from flaskblog.database_reset import database_reset
 from flaskblog.models import Task
 import json
 
 
 def test_get():
-    DatabaseReset()
+    database_reset()
     create_default_task()
 
     testapp = client()
@@ -29,7 +29,7 @@ def test_get():
 
 
 def test_post():
-    DatabaseReset()
+    database_reset()
     testapp = client()
 
     request_body = {
@@ -59,7 +59,7 @@ def test_post():
 
 
 def test_delete():
-    DatabaseReset()
+    database_reset()
     task = create_default_task()
     testapp = client()
 
@@ -74,7 +74,7 @@ def test_delete():
 
 
 def test_put():
-    DatabaseReset()
+    database_reset()
     task = create_default_task()
 
     testapp = client()
