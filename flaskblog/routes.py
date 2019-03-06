@@ -34,6 +34,8 @@ def get_tasks():
     for task in tasks:
         status = task.status
         response.append({
+            'id': task.id,
+            'type': 'task',
             'title': task.title,
             'content': task.content,
             'status_id': task.status_id,
@@ -61,6 +63,8 @@ def create_task():
     status = task.status
 
     response = {
+        'type': 'task',
+        'id': task.id,
         'title': task.title,
         'content': task.content,
         'status_id': task.status_id,
@@ -94,6 +98,8 @@ def update_task(task_id):
     status = task.status
 
     response = {
+        'id': task.id,
+        'type': 'task',
         'title': task.title,
         'content': task.content,
         'status_id': task.status_id,
@@ -115,6 +121,7 @@ def get_statuses():
             lambda status: {
                 'title': status.title,
                 'id': status.id,
+                'type': 'status',
             },
             statuses
         )
@@ -128,6 +135,7 @@ def create_statuses():
     status = service.post(request_json['title'])
     response = {
         'id': status.id,
+        'type': 'status',
         'title': status.title,
     }
     return jsonify(response)
@@ -147,6 +155,7 @@ def update_statuses(status_id):
     status = service.put(status_id, request_json['title'])
     response = {
         'id': status.id,
+        'type': 'status',
         'title': status.title,
     }
     return jsonify(response)

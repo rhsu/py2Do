@@ -6,18 +6,20 @@ import json
 
 def test_get():
     database_reset()
-    create_default_task()
+    task = create_default_task()
 
     testapp = client()
 
     expected_response = [{
-        'content': 'some fake content',
-        'title': 'test',
-        'status_id': 1,
-        'meta': {
-            'status': {
-                'id': 1,
-                'title': 'Not Started'
+        "id": task.id,
+        "type": "task",
+        "content": "some fake content",
+        "title": "test",
+        "status_id": 1,
+        "meta": {
+            "status": {
+                "id": 1,
+                "title": "Not Started"
             },
         },
     }]
@@ -35,27 +37,35 @@ def test_post():
     request_body = {
         "content": "some fake content",
         "title": "test",
+        "type": "task",
         "status_id": 1
     }
-
-    expected_response = {
-            'content': 'some fake content',
-            'title': 'test',
-            # TODO refactor this. shouldn't assert off of 1. should find that
-            # something was created in the database first.
-            # then assert this.
-            'status_id': 1,
-            'meta': {
-                'status': {
-                    'id': 1,
-                    'title': 'Not Started'
-                },
-            },
-        }
 
     response = testapp.post('/tasks',
                             data=json.dumps(request_body),
                             content_type='application/json')
+
+    """
+    finding newly created task
+    """
+    task = Task.query.filter_by(id=1).first()
+
+    expected_response = {
+            "id": task.id,
+            "type": "task",
+            "content": "some fake content",
+            "title": "test",
+            # TODO refactor this. shouldn't assert off of 1. should find that
+            # something was created in the database first.
+            # then assert this.
+            "status_id": 1,
+            "meta": {
+                "status": {
+                    "id": 1,
+                    "title": "Not Started"
+                },
+            },
+        }
 
     assert response.status_code == 200
     assert response.get_json() == expected_response
@@ -85,11 +95,14 @@ def test_put():
     request_body = {
         "content": "some new content",
         "title": "new title",
+        "type": "task",
         # TODO: should test setting a new status
         "status_id": 1
     }
 
     expected_response = {
+            'id': task.id,
+            'type': 'task',
             'content': 'some new content',
             'title': 'new title',
             'status_id': 1,

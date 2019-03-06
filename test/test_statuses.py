@@ -9,16 +9,19 @@ def test_get():
     testapp = client()
     expected_response = [
         {
-            'id': 1,
-            'title': 'Not Started',
+            "id": 1,
+            "type": "status",
+            "title": "Not Started",
         },
         {
-            'id': 2,
-            'title': 'In Progress',
+            "id": 2,
+            "type": "status",
+            "title": "In Progress",
         },
         {
-            'id': 3,
-            'title': 'Done',
+            "id": 3,
+            "type": "status",
+            "title": "Done",
         },
     ]
     response = testapp.get('/statuses')
@@ -29,7 +32,7 @@ def test_get():
 def test_post():
     database_reset()
     testapp = client()
-    request_body = {'title': 'some new status'}
+    request_body = {"title": "some new status", "type": "status"}
     response = testapp.post('/statuses',
                             data=json.dumps(request_body),
                             content_type='application/json')
@@ -43,6 +46,7 @@ def test_post():
     assert response.status_code == 200
     assert response.get_json() == {
         "id": new_id,
+        "type": "status",
         "title": "some new status"
     }
 
@@ -63,7 +67,7 @@ def test_delete():
 def test_put():
     database_reset()
     status = Status.query.filter_by(id=1).first()
-    request_body = {"title": "some updated status"}
+    request_body = {"title": "some updated status", "type": "status"}
 
     testapp = client()
 
@@ -77,5 +81,6 @@ def test_put():
     assert response.status_code == 200
     assert response.get_json() == {
         "id": 1,
+        "type": "status",
         "title": "some updated status",
     }
