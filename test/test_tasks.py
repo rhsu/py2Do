@@ -41,6 +41,9 @@ def test_post():
     expected_response = {
             'content': 'some fake content',
             'title': 'test',
+            # TODO refactor this. shouldn't assert off of 1. should find that
+            # something was created in the database first.
+            # then assert this.
             'status_id': 1,
             'meta': {
                 'status': {

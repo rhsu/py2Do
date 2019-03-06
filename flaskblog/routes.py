@@ -2,6 +2,7 @@ from flask import jsonify, request
 from flaskblog import app
 from flaskblog.register_service import RegisterService
 from flaskblog.services.tasks.task_service import TaskService
+from flaskblog.services.statuses.status_service import StatusService
 
 
 @app.route("/register", methods=['POST'])
@@ -102,5 +103,50 @@ def update_task(task_id):
                 'title': status.title
             }
         }
+    }
+    return jsonify(response)
+
+
+@app.route('/statuses', methods=['GET'])
+def get_statuses():
+    service = StatusService()
+    statuses = service.get()
+    response = map(
+            lambda status: {
+                'title': status.title,
+                'id': status.id,
+            },
+            statuses
+        )
+    return jsonify(response)
+
+
+@app.route('/statuses', methods=['POST'])
+def create_statuses():
+    request_json = request.json
+    service = StatusService()
+    status = service.post(request_json['title'])
+    response = {
+        'id': status.id,
+        'title': status.title,
+    }
+    return jsonify(response)
+
+
+@app.route('/statuses/<int:status_id>', methods=['DELETE'])
+def delete_statuses(status_id):
+    service = StatusService()
+    service.delete(status_id)
+    return jsonify({'success': True})
+
+
+@app.route('/statuses/<int:status_id>', methods=['PUT'])
+def update_statuses(status_id):
+    request_json = request.json
+    service = StatusService()
+    status = service.put(status_id, request_json['title'])
+    response = {
+        'id': status.id,
+        'title': status.title,
     }
     return jsonify(response)
