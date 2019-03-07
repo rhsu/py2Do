@@ -1,4 +1,4 @@
-from flaskblog.database_reset import database_reset
+from app.database_reset import database_reset
 
 
 if __name__ == '__main__':

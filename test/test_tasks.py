@@ -1,6 +1,6 @@
 from fixture import client, create_default_task
-from flaskblog.database_reset import database_reset
-from flaskblog.models import Task
+from app.database_reset import database_reset
+from app.models import Task
 import json
 
 

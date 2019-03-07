@@ -1,6 +1,6 @@
 from fixture import client
-from flaskblog.database_reset import database_reset
-from flaskblog.models import Status
+from app.database_reset import database_reset
+from app.models import Status
 import json
 
 

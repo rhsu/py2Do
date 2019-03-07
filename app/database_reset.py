@@ -1,5 +1,5 @@
-from flaskblog import db
-from flaskblog.create_default_statuses import CreateDefaultStatuses
+from app import db
+from app.create_default_statuses import CreateDefaultStatuses
 
 
 def database_reset():

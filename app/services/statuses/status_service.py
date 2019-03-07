@@ -1,5 +1,5 @@
-from flaskblog import db
-from flaskblog.models import Status
+from app import db
+from app.models import Status
 
 
 class StatusService:

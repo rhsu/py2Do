@@ -1,5 +1,5 @@
-from flaskblog import db
-from flaskblog.models import User
+from app import db
+from app.models import User
 
 
 class RegisterService:

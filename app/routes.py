@@ -1,10 +1,10 @@
 from flask import jsonify, request
-from flaskblog import app
-from flaskblog.register_service import RegisterService
-from flaskblog.services.tasks.task_service import TaskService
-from flaskblog.services.statuses.status_service import StatusService
-from flaskblog.presenters.tasks.task_presenter import TaskPresenter
-from flaskblog.presenters.statuses.status_presenter import StatusPresenter
+from app import app
+from app.register_service import RegisterService
+from app.services.tasks.task_service import TaskService
+from app.services.statuses.status_service import StatusService
+from app.presenters.tasks.task_presenter import TaskPresenter
+from app.presenters.statuses.status_presenter import StatusPresenter
 
 
 @app.route("/register", methods=['POST'])
