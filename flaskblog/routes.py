@@ -3,6 +3,8 @@ from flaskblog import app
 from flaskblog.register_service import RegisterService
 from flaskblog.services.tasks.task_service import TaskService
 from flaskblog.services.statuses.status_service import StatusService
+from flaskblog.presenters.tasks.task_presenter import TaskPresenter
+from flaskblog.presenters.statuses.status_presenter import StatusPresenter
 
 
 @app.route("/register", methods=['POST'])
@@ -27,117 +29,55 @@ def register():
 
 @app.route('/tasks', methods=['GET'])
 def get_tasks():
-    service = TaskService()
-    tasks = service.get()
-    response = []
-
-    for task in tasks:
-        status = task.status
-        response.append({
-            'id': task.id,
-            'type': 'task',
-            'title': task.title,
-            'content': task.content,
-            'status_id': task.status_id,
-            'meta': {
-                'status': {
-                    'id': status.id,
-                    'title': status.title
-                }
-            }
-        })
+    tasks = TaskService().get()
+    response = TaskPresenter().convert_list(tasks)
     return jsonify(response)
 
 
 @app.route('/tasks', methods=['POST'])
 def create_task():
     request_json = request.json
-    service = TaskService()
-
-    task = service.post(
+    task = TaskService().post(
         request_json['title'],
         request_json['content'],
         request_json['status_id']
     )
 
-    status = task.status
-
-    response = {
-        'type': 'task',
-        'id': task.id,
-        'title': task.title,
-        'content': task.content,
-        'status_id': task.status_id,
-        'meta': {
-            'status': {
-                'id': status.id,
-                'title': status.title
-            }
-        }
-    }
+    response = TaskPresenter().convert(task)
     return jsonify(response)
 
 
 @app.route('/tasks/<int:task_id>', methods=['DELETE'])
 def delete_task(task_id):
-    service = TaskService()
-    service.delete(task_id)
+    TaskService().delete(task_id)
     return jsonify({'success': True})
 
 
 @app.route('/tasks/<int:task_id>', methods=['PUT'])
 def update_task(task_id):
     request_json = request.json
-    service = TaskService()
-    task = service.put(
+    task = TaskService().put(
         task_id,
         request_json['title'],
         request_json['content'],
         request_json['status_id']
     )
-    status = task.status
-
-    response = {
-        'id': task.id,
-        'type': 'task',
-        'title': task.title,
-        'content': task.content,
-        'status_id': task.status_id,
-        'meta': {
-            'status': {
-                'id': status.id,
-                'title': status.title
-            }
-        }
-    }
+    response = TaskPresenter().convert(task)
     return jsonify(response)
 
 
 @app.route('/statuses', methods=['GET'])
 def get_statuses():
-    service = StatusService()
-    statuses = service.get()
-    response = map(
-            lambda status: {
-                'title': status.title,
-                'id': status.id,
-                'type': 'status',
-            },
-            statuses
-        )
+    statuses = StatusService().get()
+    response = StatusPresenter().convert_list(statuses)
     return jsonify(response)
 
 
 @app.route('/statuses', methods=['POST'])
 def create_statuses():
     request_json = request.json
-    service = StatusService()
-    status = service.post(request_json['title'])
-    response = {
-        'id': status.id,
-        'type': 'status',
-        'title': status.title,
-    }
+    status = StatusService().post(request_json['title'])
+    response = StatusPresenter().convert(status)
     return jsonify(response)
 
 
@@ -151,11 +91,6 @@ def delete_statuses(status_id):
 @app.route('/statuses/<int:status_id>', methods=['PUT'])
 def update_statuses(status_id):
     request_json = request.json
-    service = StatusService()
-    status = service.put(status_id, request_json['title'])
-    response = {
-        'id': status.id,
-        'type': 'status',
-        'title': status.title,
-    }
+    status = StatusService().put(status_id, request_json['title'])
+    response = StatusPresenter().convert(status)
     return jsonify(response)
