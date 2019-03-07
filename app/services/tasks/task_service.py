@@ -21,6 +21,7 @@ class TaskService:
     def delete(self, id):
         Task.query.filter_by(id=id).delete()
         db.session.commit()
+        return {"success": True}
 
     def put(self, id, title, content, status_id):
         task = Task.query.filter_by(id=id).first()

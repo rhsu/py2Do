@@ -49,8 +49,8 @@ def create_task():
 
 @app.route('/tasks/<int:task_id>', methods=['DELETE'])
 def delete_task(task_id):
-    TaskService().delete(task_id)
-    return jsonify({'success': True})
+    response = TaskService().delete(task_id)
+    return jsonify(response)
 
 
 @app.route('/tasks/<int:task_id>', methods=['PUT'])
@@ -83,9 +83,8 @@ def create_statuses():
 
 @app.route('/statuses/<int:status_id>', methods=['DELETE'])
 def delete_statuses(status_id):
-    service = StatusService()
-    service.delete(status_id)
-    return jsonify({'success': True})
+    response = StatusService().delete(status_id)
+    return jsonify(response)
 
 
 @app.route('/statuses/<int:status_id>', methods=['PUT'])

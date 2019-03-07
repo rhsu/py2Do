@@ -16,6 +16,7 @@ class StatusService:
     def delete(self, id):
         Status.query.filter_by(id=id).delete()
         db.session.commit()
+        return {"success": True}
 
     def put(self, id, title):
         status = Status.query.filter_by(id=id).first()
