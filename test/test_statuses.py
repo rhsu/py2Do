@@ -1,4 +1,4 @@
-from fixture import client
+from fixture import client, create_default_task
 from app.database_reset import database_reset
 from app.models import Status
 import json
@@ -7,7 +7,9 @@ import json
 def test_get():
     database_reset()
     testapp = client()
-    expected_response = [
+    response = testapp.get('/statuses')
+    assert response.status_code == 200
+    assert response.get_json() == [
         {
             "id": 1,
             "type": "status",
@@ -24,9 +26,6 @@ def test_get():
             "title": "Done",
         },
     ]
-    response = testapp.get('/statuses')
-    assert response.status_code == 200
-    assert response.get_json() == expected_response
 
 
 def test_post():
@@ -54,14 +53,23 @@ def test_post():
 def test_delete():
     database_reset()
     testapp = client()
-    expected_response = {'success': True}
     response = testapp.delete('/statuses/%s' % (1))
-
     assert response.status_code == 200
-    assert response.get_json() == expected_response
-
+    assert response.get_json() == {"success": True}
     found_status = Status.query.filter_by(id=1).first()
     assert found_status is None
+
+
+def test_delete_but_referenced():
+    database_reset()
+    testapp = client()
+    default_task = create_default_task()
+    response = testapp.delete('/statuses/%s' % (default_task.status_id))
+    assert response.status_code == 422
+    assert response.get_json() == {
+        "success": False,
+        "reason": "This status is being referenced"
+    }
 
 
 def test_put():

@@ -22,7 +22,10 @@ def create_statuses():
 @app.route('/statuses/<int:status_id>', methods=['DELETE'])
 def delete_statuses(status_id):
     response = StatusService().delete(status_id)
-    return jsonify(response)
+    if response["success"]:
+        return jsonify(response)
+    else:
+        return jsonify(response), 422
 
 
 @app.route('/statuses/<int:status_id>', methods=['PUT'])
