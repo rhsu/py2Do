@@ -1,5 +1,5 @@
 from app import db
-from app.models import Status
+from app.models.status import Status
 
 
 class CreateDefaultStatuses:

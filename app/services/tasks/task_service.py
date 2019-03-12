@@ -1,5 +1,6 @@
 from app import db
-from app.models import Task, Status
+from app.models.task import Task
+from app.models.status import Status
 from sqlalchemy.orm.exc import NoResultFound
 
 

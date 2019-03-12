@@ -1,5 +1,6 @@
 from app import db
-from app.models import Status, Task
+from app.models.status import Status
+from app.models.task import Task
 
 
 class StatusService:

@@ -1,7 +1,7 @@
 # TODO: should learn how to use real fixtures in pytest
 # for reference see https://github.com/rhsu/py2Do/issues/19
 from app import app, db
-from app.models import Task
+from app.models.task import Task
 
 
 def client():
