@@ -1,12 +1,13 @@
 from fixture import client, create_default_task
 from app.database_reset import database_reset
-from app.models import Task
+from app.models import Task, Status
 import json
 
 
 def test_get():
     database_reset()
     task = create_default_task()
+    status_id = task.status_id
 
     testapp = client()
 
@@ -15,16 +16,16 @@ def test_get():
         "type": "task",
         "content": "some fake content",
         "title": "test",
-        "status_id": 1,
+        "status_id": status_id,
         "meta": {
             "status": {
-                "id": 1,
-                "title": "Not Started"
+                "id": status_id,
+                "title": "Not Started",
             },
         },
     }]
 
-    response = testapp.get('/tasks')
+    response = testapp.get("/tasks")
 
     assert response.status_code == 200
     assert response.get_json() == expected_response
@@ -33,12 +34,12 @@ def test_get():
 def test_post():
     database_reset()
     testapp = client()
-
+    status_id = Status.query.first().id
     request_body = {
         "content": "some fake content",
         "title": "test",
         "type": "task",
-        "status_id": 1
+        "status_id": status_id,
     }
 
     response = testapp.post('/tasks',
@@ -48,21 +49,18 @@ def test_post():
     """
     finding newly created task
     """
-    task = Task.query.filter_by(id=1).first()
+    task = Task.query.filter_by(id=status_id).first()
 
     expected_response = {
             "id": task.id,
             "type": "task",
             "content": "some fake content",
             "title": "test",
-            # TODO refactor this. shouldn't assert off of 1. should find that
-            # something was created in the database first.
-            # then assert this.
-            "status_id": 1,
+            "status_id": status_id,
             "meta": {
                 "status": {
-                    "id": 1,
-                    "title": "Not Started"
+                    "id": status_id,
+                    "title": "Not Started",
                 },
             },
         }
@@ -76,7 +74,7 @@ def test_delete():
     task = create_default_task()
     task_id = task.id
     testapp = client()
-    response = testapp.delete('/tasks/%s' % (task_id))
+    response = testapp.delete("/tasks/%s" % (task_id))
     assert response.status_code == 200
     assert response.get_json() == {"success": True}
     found_task = Task.query.filter_by(id=task_id).first()
@@ -86,34 +84,34 @@ def test_delete():
 def test_put():
     database_reset()
     task = create_default_task()
-
+    status_id = task.status_id
     testapp = client()
 
     request_body = {
         "content": "some new content",
         "title": "new title",
         "type": "task",
-        # TODO: should test setting a new status
-        "status_id": 1
+        # TODO: what if status doesn't exist?
+        "status_id": status_id,
     }
 
     expected_response = {
-            'id': task.id,
-            'type': 'task',
-            'content': 'some new content',
-            'title': 'new title',
-            'status_id': 1,
-            'meta': {
-                'status': {
-                    'id': 1,
-                    'title': 'Not Started'
+            "id": task.id,
+            "type": "task",
+            "content": "some new content",
+            "title": "new title",
+            "status_id": status_id,
+            "meta": {
+                "status": {
+                    "id": status_id,
+                    "title": "Not Started",
                 },
             },
         }
 
-    response = testapp.put('/tasks/%s' % (task.id),
+    response = testapp.put("/tasks/%s" % (task.id),
                            data=json.dumps(request_body),
-                           content_type='application/json')
+                           content_type="application/json")
 
     """
     testing that the response is correct
@@ -125,6 +123,6 @@ def test_put():
     testing that the record was updated correctly in the database
     """
     found_task = Task.query.filter_by(id=task.id).first()
-    assert found_task.content == 'some new content'
-    assert found_task.title == 'new title'
-    assert found_task.status_id == 1
+    assert found_task.content == "some new content"
+    assert found_task.title == "new title"
+    assert found_task.status_id == status_id
