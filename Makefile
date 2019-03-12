@@ -1,7 +1,7 @@
 test:
 	python -m pytest -v test/
 
-tasks-test:
+task-test:
 	python -m pytest -v test/test_tasks.py
 
 status-test:

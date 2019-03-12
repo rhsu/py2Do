@@ -1,5 +1,6 @@
 from app import db
-from app.models import Task
+from app.models import Task, Status
+from sqlalchemy.orm.exc import NoResultFound
 
 
 class TaskService:
@@ -8,6 +9,10 @@ class TaskService:
         return Task.query.filter_by(is_deleted=False).all()
 
     def post(self, title, content, status_id):
+        if not self.valid_status(status_id):
+            raise NoResultFound(
+                "no result found for status_id %s" % (status_id))
+
         new_task = Task(
             title=title,
             content=content,
@@ -25,6 +30,10 @@ class TaskService:
         return {"success": True}
 
     def put(self, id, title, content, status_id):
+        if not self.valid_status(status_id):
+            raise NoResultFound(
+                "no result found for status_id %s" % (status_id))
+
         task = Task.query.filter_by(id=id).first()
 
         task.title = title
@@ -34,3 +43,6 @@ class TaskService:
         db.session.add(task)
         db.session.commit()
         return task
+
+    def valid_status(self, status_id):
+        return Status.query.filter_by(id=status_id).count() == 1

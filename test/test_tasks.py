@@ -69,6 +69,27 @@ def test_post():
     assert response.get_json() == expected_response
 
 
+def test_post_bad_status_id():
+    database_reset()
+    testapp = client()
+    status_id = Status.query.first().id + 1000
+    request_body = {
+        "content": "some fake content",
+        "title": "test",
+        "type": "task",
+        "status_id": status_id,
+    }
+
+    response = testapp.post('/tasks',
+                            data=json.dumps(request_body),
+                            content_type='application/json')
+
+    assert response.status_code == 422
+    assert response.get_json() == {
+        "errors": ["status_id of %s is not valid" % status_id]
+    }
+
+
 def test_delete():
     database_reset()
     task = create_default_task()
@@ -91,7 +112,6 @@ def test_put():
         "content": "some new content",
         "title": "new title",
         "type": "task",
-        # TODO: what if status doesn't exist?
         "status_id": status_id,
     }
 
@@ -126,3 +146,26 @@ def test_put():
     assert found_task.content == "some new content"
     assert found_task.title == "new title"
     assert found_task.status_id == status_id
+
+
+def test_put_bad_status_id():
+    database_reset()
+    task = create_default_task()
+    status_id = task.status_id + 1000
+    testapp = client()
+
+    request_body = {
+        "content": "some new content",
+        "title": "new title",
+        "type": "task",
+        "status_id": status_id,
+    }
+
+    response = testapp.put("/tasks/%s" % (task.id),
+                           data=json.dumps(request_body),
+                           content_type="application/json")
+
+    assert response.status_code == 422
+    assert response.get_json() == {
+        "errors": ["status_id of %s is not valid" % status_id]
+    }
