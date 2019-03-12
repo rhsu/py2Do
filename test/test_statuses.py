@@ -53,11 +53,13 @@ def test_post():
 def test_delete():
     database_reset()
     testapp = client()
-    response = testapp.delete('/statuses/%s' % (1))
+    some_status = Status.query.first()
+    status_id = some_status.id
+    response = testapp.delete('/statuses/%s' % (status_id))
     assert response.status_code == 200
     assert response.get_json() == {"success": True}
-    found_status = Status.query.filter_by(id=1).first()
-    assert found_status is None
+    found_status = Status.query.filter_by(id=status_id).first()
+    assert found_status.is_deleted
 
 
 def test_delete_but_referenced():

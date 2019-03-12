@@ -33,6 +33,7 @@ class Task(db.Model):
         nullable=False
     )
     status = db.relationship('Status', lazy=True)
+    is_deleted = db.Column(db.Boolean, nullable=False, default=False)
 
 
 class Status(db.Model):
@@ -41,3 +42,4 @@ class Status(db.Model):
     date_created = db.Column(
         db.DateTime, nullable=False, default=datetime.utcnow
     )
+    is_deleted = db.Column(db.Boolean, nullable=False, default=False)

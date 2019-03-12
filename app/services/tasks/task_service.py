@@ -5,7 +5,7 @@ from app.models import Task
 class TaskService:
 
     def get(self):
-        return Task.query.all()
+        return Task.query.filter_by(is_deleted=False).all()
 
     def post(self, title, content, status_id):
         new_task = Task(
@@ -19,7 +19,8 @@ class TaskService:
         return new_task
 
     def delete(self, id):
-        Task.query.filter_by(id=id).delete()
+        task = Task.query.filter_by(id=id).first()
+        task.is_deleted = True
         db.session.commit()
         return {"success": True}
 

@@ -74,16 +74,13 @@ def test_post():
 def test_delete():
     database_reset()
     task = create_default_task()
+    task_id = task.id
     testapp = client()
-
-    expected_response = {'success': True}
-    response = testapp.delete('/tasks/%s' % (task.id))
-
+    response = testapp.delete('/tasks/%s' % (task_id))
     assert response.status_code == 200
-    assert response.get_json() == expected_response
-
-    found_task = Task.query.filter_by(id=task.id).first()
-    assert found_task is None
+    assert response.get_json() == {"success": True}
+    found_task = Task.query.filter_by(id=task_id).first()
+    assert found_task.is_deleted
 
 
 def test_put():

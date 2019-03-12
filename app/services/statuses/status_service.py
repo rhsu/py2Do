@@ -5,7 +5,7 @@ from app.models import Status, Task
 class StatusService:
 
     def get(self):
-        return Status.query.all()
+        return Status.query.filter_by(is_deleted=False).all()
 
     def post(self, title):
         status = Status(title=title,)
@@ -19,7 +19,8 @@ class StatusService:
         """
         count = Task.query.filter_by(status_id=id).count()
         if count == 0:
-            Status.query.filter_by(id=id).delete()
+            status = Status.query.filter_by(id=id).first()
+            status.is_deleted = True
             db.session.commit()
             return {"success": True}
         else:
