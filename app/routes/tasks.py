@@ -1,7 +1,7 @@
 from flask import jsonify, request
 from app import app
 from app.services.tasks.task_service import TaskService
-from app.presenters.tasks.task_presenter import TaskPresenter
+from app.presenters.task_presenter import TaskPresenter
 from sqlalchemy.orm.exc import NoResultFound
 
 

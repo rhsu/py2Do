@@ -1,7 +1,7 @@
 from flask import jsonify, request
 from app import app
 from app.services.statuses.status_service import StatusService
-from app.presenters.statuses.status_presenter import StatusPresenter
+from app.presenters.status_presenter import StatusPresenter
 
 
 @app.route('/statuses', methods=['GET'])
