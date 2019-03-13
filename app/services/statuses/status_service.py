@@ -27,7 +27,7 @@ class StatusService:
         else:
             return {
                 "success": False,
-                "reason": "This status is being referenced"
+                "errors": ["This status is being referenced"]
             }
 
     def put(self, id, title):

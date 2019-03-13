@@ -70,7 +70,7 @@ def test_delete_but_referenced():
     assert response.status_code == 422
     assert response.get_json() == {
         "success": False,
-        "reason": "This status is being referenced"
+        "errors": ["This status is being referenced"]
     }
 
 
