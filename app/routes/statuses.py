@@ -1,6 +1,6 @@
 from flask import jsonify, request
 from app import app
-from app.services.statuses.status_service import StatusService
+from app.services.status_service import StatusService
 from app.presenters.status_presenter import StatusPresenter
 
 
