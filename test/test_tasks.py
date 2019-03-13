@@ -1,7 +1,7 @@
-from fixture import client, create_default_task
 from app.database_reset import database_reset
-from app.models.task import Task
 from app.models.status import Status
+from app.models.task import Task
+from fixture import client, create_default_task
 import json
 
 

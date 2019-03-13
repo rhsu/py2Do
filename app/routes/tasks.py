@@ -1,7 +1,7 @@
-from flask import jsonify, request
 from app import app
-from app.services.task_service import TaskService
 from app.presenters.task_presenter import TaskPresenter
+from app.services.task_service import TaskService
+from flask import jsonify, request
 from sqlalchemy.orm.exc import NoResultFound
 
 
