@@ -6,7 +6,10 @@ from sqlalchemy.orm.exc import NoResultFound
 
 class TaskService:
 
-    def get(self):
+    def get(self, id):
+        return Task.query.filter_by(id=id, is_deleted=False).first()
+
+    def get_list(self):
         return Task.query.filter_by(is_deleted=False).all()
 
     def post(self, title, content, status_id):

@@ -7,8 +7,19 @@ from sqlalchemy.orm.exc import NoResultFound
 
 @app.route('/tasks', methods=['GET'])
 def get_tasks():
-    tasks = TaskService().get()
+    tasks = TaskService().get_list()
     response = TaskPresenter().convert_list(tasks)
+    return jsonify(response)
+
+
+@app.route('/tasks/<int:task_id>', methods=['GET'])
+def get_task(task_id):
+    task = TaskService().get(task_id)
+    if task is None:
+        return jsonify({
+            "errors": ["the task of id %s does not exist" % (task_id)]
+        }), 422
+    response = TaskPresenter().convert(task)
     return jsonify(response)
 
 

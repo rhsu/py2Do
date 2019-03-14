@@ -1,3 +1,4 @@
+from app import db
 from app.database_reset import database_reset
 from app.models.status import Status
 from fixture import client, create_default_task
@@ -26,6 +27,43 @@ def test_get():
             "title": "Done",
         },
     ]
+
+
+def test_get_by_id():
+    database_reset()
+    testapp = client()
+    response = testapp.get("/statuses/1")
+    assert response.status_code == 200
+    assert response.get_json() == {
+        "id": 1,
+        "type": "status",
+        "title": "Not Started",
+    }
+
+
+def test_get_by_id_when_deleted():
+    database_reset()
+    testapp = client()
+    status = Status.query.first()
+    status.is_deleted = True
+    db.session.add(status)
+    db.session.commit()
+    response = testapp.get("/statuses/%s" % status.id)
+    assert response.status_code == 422
+    assert response.get_json() == {
+        "errors": ["the status of id %s does not exist" % (status.id)]
+    }
+
+
+def test_get_by_id_when_bogus_id():
+    database_reset()
+    testapp = client()
+    status_id = Status.query.first().id
+    response = testapp.get("/statuses/%s" % (status_id+1000))
+    assert response.status_code == 422
+    assert response.get_json() == {
+        "errors": ["the status of id %s does not exist" % (status_id+1000)]
+    }
 
 
 def test_post():

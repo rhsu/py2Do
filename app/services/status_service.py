@@ -5,7 +5,10 @@ from app.models.task import Task
 
 class StatusService:
 
-    def get(self):
+    def get(self, id):
+        return Status.query.filter_by(id=id, is_deleted=False).first()
+
+    def get_list(self):
         return Status.query.filter_by(is_deleted=False).all()
 
     def post(self, title):

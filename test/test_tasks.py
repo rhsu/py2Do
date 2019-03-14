@@ -1,3 +1,4 @@
+from app import db
 from app.database_reset import database_reset
 from app.models.status import Status
 from app.models.task import Task
@@ -5,31 +6,80 @@ from fixture import client, create_default_task
 import json
 
 
-def test_get():
+def test_get_by_id():
     database_reset()
     task = create_default_task()
     status_id = task.status_id
-
     testapp = client()
 
-    expected_response = [{
-        "id": task.id,
-        "type": "task",
-        "content": "some fake content",
+    response = testapp.get("/tasks/%s" % (task.id))
+
+    assert response.status_code == 200
+    assert response.get_json() == {
         "title": "test",
         "status_id": status_id,
+        "content": "some fake content",
         "meta": {
             "status": {
                 "id": status_id,
                 "title": "Not Started",
-            },
+            }
         },
-    }]
+        "type": "task",
+        "id": task.id
+    }
+
+
+def test_get_by_id_item_deleted():
+    database_reset()
+    testapp = client()
+    task = create_default_task()
+    task.is_deleted = True
+    db.session.add(task)
+    db.session.commit()
+    response = testapp.get("/tasks/%s" % task.id)
+    assert response.status_code == 422
+    assert response.get_json() == {
+        "errors": ["the task of id %s does not exist" % (task.id)]
+    }
+
+
+def test_get_by_id_when_bogus_id():
+    database_reset()
+    testapp = client()
+    task = create_default_task()
+    task_id = task.id
+    response = testapp.get("/tasks/%s" % (task_id+1000))
+    assert response.status_code == 422
+    assert response.get_json() == {
+        "errors": ["the task of id %s does not exist" % (task_id+1000)]
+    }
+
+
+def test_get():
+    database_reset()
+    task = create_default_task()
+    status_id = task.status_id
+    testapp = client()
 
     response = testapp.get("/tasks")
 
     assert response.status_code == 200
-    assert response.get_json() == expected_response
+    assert response.get_json() == [
+        {
+            "id": task.id,
+            "type": "task",
+            "content": "some fake content",
+            "title": "test",
+            "status_id": status_id,
+            "meta": {
+                "status": {
+                    "id": status_id,
+                    "title": "Not Started",
+                },
+            },
+        }
+    ]
 
 
 def test_post():
@@ -52,22 +102,20 @@ def test_post():
     """
     task = Task.query.filter_by(id=status_id).first()
 
-    expected_response = {
-            "id": task.id,
-            "type": "task",
-            "content": "some fake content",
-            "title": "test",
-            "status_id": status_id,
-            "meta": {
-                "status": {
-                    "id": status_id,
-                    "title": "Not Started",
-                },
-            },
-        }
-
     assert response.status_code == 200
-    assert response.get_json() == expected_response
+    assert response.get_json() == {
+        "id": task.id,
+        "type": "task",
+        "content": "some fake content",
+        "title": "test",
+        "status_id": status_id,
+        "meta": {
+            "status": {
+                "id": status_id,
+                "title": "Not Started",
+            },
+        },
+    }
 
 
 def test_post_bad_status_id():
