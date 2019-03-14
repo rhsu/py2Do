@@ -12,17 +12,17 @@ def test_get():
     assert response.status_code == 200
     assert response.get_json() == [
         {
-            "id": 1,
+            "id": "1",
             "type": "status",
             "title": "Not Started",
         },
         {
-            "id": 2,
+            "id": "2",
             "type": "status",
             "title": "In Progress",
         },
         {
-            "id": 3,
+            "id": "3",
             "type": "status",
             "title": "Done",
         },
@@ -35,7 +35,7 @@ def test_get_by_id():
     response = testapp.get("/statuses/1")
     assert response.status_code == 200
     assert response.get_json() == {
-        "id": 1,
+        "id": "1",
         "type": "status",
         "title": "Not Started",
     }
@@ -82,7 +82,7 @@ def test_post():
     assert new_status.title == "some new status"
     assert response.status_code == 200
     assert response.get_json() == {
-        "id": new_id,
+        "id": str(new_id),
         "type": "status",
         "title": "some new status"
     }
@@ -128,7 +128,7 @@ def test_put():
     """
     assert response.status_code == 200
     assert response.get_json() == {
-        "id": 1,
+        "id": "1",
         "type": "status",
         "title": "some updated status",
     }

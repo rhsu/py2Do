@@ -17,16 +17,16 @@ def test_get_by_id():
     assert response.status_code == 200
     assert response.get_json() == {
         "title": "test",
-        "status_id": status_id,
+        "status_id": str(status_id),
         "content": "some fake content",
         "meta": {
             "status": {
-                "id": status_id,
+                "id": str(status_id),
                 "title": "Not Started",
             }
         },
         "type": "task",
-        "id": task.id
+        "id": str(task.id),
     }
 
 
@@ -67,14 +67,14 @@ def test_get():
     assert response.status_code == 200
     assert response.get_json() == [
         {
-            "id": task.id,
+            "id": str(task.id),
             "type": "task",
             "content": "some fake content",
             "title": "test",
-            "status_id": status_id,
+            "status_id": str(status_id),
             "meta": {
                 "status": {
-                    "id": status_id,
+                    "id": str(status_id),
                     "title": "Not Started",
                 },
             },
@@ -90,7 +90,7 @@ def test_post():
         "content": "some fake content",
         "title": "test",
         "type": "task",
-        "status_id": status_id,
+        "status_id": str(status_id),
     }
 
     response = testapp.post('/tasks',
@@ -104,14 +104,14 @@ def test_post():
 
     assert response.status_code == 200
     assert response.get_json() == {
-        "id": task.id,
+        "id": str(task.id),
         "type": "task",
         "content": "some fake content",
         "title": "test",
-        "status_id": status_id,
+        "status_id": str(status_id),
         "meta": {
             "status": {
-                "id": status_id,
+                "id": str(status_id),
                 "title": "Not Started",
             },
         },
@@ -126,7 +126,7 @@ def test_post_bad_status_id():
         "content": "some fake content",
         "title": "test",
         "type": "task",
-        "status_id": status_id,
+        "status_id": str(status_id),
     }
 
     response = testapp.post('/tasks',
@@ -161,22 +161,8 @@ def test_put():
         "content": "some new content",
         "title": "new title",
         "type": "task",
-        "status_id": status_id,
+        "status_id": str(status_id),
     }
-
-    expected_response = {
-            "id": task.id,
-            "type": "task",
-            "content": "some new content",
-            "title": "new title",
-            "status_id": status_id,
-            "meta": {
-                "status": {
-                    "id": status_id,
-                    "title": "Not Started",
-                },
-            },
-        }
 
     response = testapp.put("/tasks/%s" % (task.id),
                            data=json.dumps(request_body),
@@ -186,7 +172,19 @@ def test_put():
     testing that the response is correct
     """
     assert response.status_code == 200
-    assert expected_response == response.get_json()
+    assert response.get_json() == {
+        "id": str(task.id),
+        "type": "task",
+        "content": "some new content",
+        "title": "new title",
+        "status_id": str(status_id),
+        "meta": {
+            "status": {
+                "id": str(status_id),
+                "title": "Not Started",
+            },
+        },
+    }
 
     """
     testing that the record was updated correctly in the database
@@ -194,7 +192,7 @@ def test_put():
     found_task = Task.query.filter_by(id=task.id).first()
     assert found_task.content == "some new content"
     assert found_task.title == "new title"
-    assert found_task.status_id == status_id
+    assert found_task.status_id == int(status_id)
 
 
 def test_put_bad_status_id():
@@ -207,7 +205,7 @@ def test_put_bad_status_id():
         "content": "some new content",
         "title": "new title",
         "type": "task",
-        "status_id": status_id,
+        "status_id": str(status_id),
     }
 
     response = testapp.put("/tasks/%s" % (task.id),
