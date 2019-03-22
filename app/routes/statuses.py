@@ -1,13 +1,25 @@
-from flask import jsonify, request
 from app import app
-from app.services.status_service import StatusService
 from app.presenters.status_presenter import StatusPresenter
+from app.services.status_service import StatusService
+from flask import jsonify, request
 
 
 @app.route('/statuses', methods=['GET'])
 def get_statuses():
-    statuses = StatusService().get()
+    statuses = StatusService().get_list()
     response = StatusPresenter().convert_list(statuses)
+    return jsonify(response)
+
+
+@app.route('/statuses/<int:status_id>', methods=['GET'])
+def get_status(status_id):
+    status = StatusService().get(status_id)
+    if status is None:
+        return jsonify({
+            "errors": ["the status of id %s does not exist" % (status_id)]
+        }), 422
+
+    response = StatusPresenter().convert(status)
     return jsonify(response)
 
 

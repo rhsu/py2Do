@@ -2,7 +2,7 @@ class StatusPresenter:
 
     def convert(self, status):
         return {
-            "id": status.id,
+            "id": str(status.id),
             "type": 'status',
             "title": status.title,
         }
