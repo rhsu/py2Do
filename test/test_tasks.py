@@ -2,6 +2,7 @@ from app import db
 from app.models.status import Status
 from app.models.task import Task
 import json
+from pdb import set_trace
 
 
 def test_get_by_id(client, default_task):
@@ -187,3 +188,7 @@ def test_put_bad_status_id(client, default_task):
     assert response.get_json() == {
         "errors": ["status_id of %s is not valid" % status_id]
     }
+
+
+def test_here(client, default_task, default_custom_field):
+    set_trace()
