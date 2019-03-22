@@ -7,3 +7,4 @@ db = SQLAlchemy(app)
 
 from app.routes import tasks
 from app.routes import statuses
+from app.routes import custom_fields

@@ -1,5 +1,6 @@
 from app import app, db
 from app.database_reset import database_reset
+from app.models.custom_field import CustomField
 from app.models.status import Status
 from app.models.task import Task
 import pytest
@@ -34,3 +35,16 @@ def default_task():
 def default_status():
     session = db.session()
     return session.query(Status).first()
+
+
+@pytest.fixture
+def default_custom_field():
+    custom_field = CustomField(
+        title="test custom field",
+        field_type=1,
+    )
+
+    session = db.session()
+    session.add(custom_field)
+    session.commit()
+    return custom_field
