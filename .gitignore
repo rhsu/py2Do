@@ -105,3 +105,6 @@ venv.bak/
 
 # database
 site.db
+
+bin/
+include/
