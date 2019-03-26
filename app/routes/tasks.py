@@ -1,4 +1,5 @@
 from app import app
+from app.exceptions import ObjectAlreadyDeletedError
 from app.presenters.task_presenter import TaskPresenter
 from app.services.task_service import TaskService
 from flask import jsonify, request
@@ -46,7 +47,15 @@ def create_task():
 
 @app.route('/tasks/<int:task_id>', methods=['DELETE'])
 def delete_task(task_id):
-    response = TaskService().delete(task_id)
+    try:
+        response = TaskService().delete(task_id)
+    except ObjectAlreadyDeletedError:
+        error = {
+            "errors": [
+                "the task of id %s does not exist" % task_id
+            ]
+        }
+        return jsonify(error), 422
     return jsonify(response)
 
 
@@ -60,6 +69,13 @@ def update_task(task_id):
             request_json['content'],
             request_json['status_id']
         )
+    except ObjectAlreadyDeletedError:
+        error = {
+            "errors": [
+                "the task of id %s does not exist" % task_id
+            ]
+        }
+        return jsonify(error), 422
     except NoResultFound:
         error = {
             "errors": [

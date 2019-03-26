@@ -14,6 +14,6 @@ db-reset:
 	python db_reset.py
 
 run:
-	python run.py
+	flask run
 
 .PHONY: test run tasks-test db_reset

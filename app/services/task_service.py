@@ -2,6 +2,7 @@ from app import db
 from app.models.status import Status
 from app.models.task import Task
 from sqlalchemy.orm.exc import NoResultFound
+from app.exceptions import ObjectAlreadyDeletedError
 
 
 class TaskService:
@@ -33,7 +34,8 @@ class TaskService:
 
     def delete(self, id):
         task = self.get(id)
-        # TODO what happens if I try to delete something already deleted
+        if task is None:
+            raise ObjectAlreadyDeletedError()
         task.is_deleted = True
         self.session.commit()
         return {"success": True}
@@ -44,7 +46,8 @@ class TaskService:
                 "no result found for status_id %s" % (status_id))
 
         task = self.get(id)
-        # TODO what if task is None?
+        if task is None:
+            raise ObjectAlreadyDeletedError()
 
         task.title = title
         task.content = content

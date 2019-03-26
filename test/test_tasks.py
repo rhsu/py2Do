@@ -79,9 +79,6 @@ def test_post(client):
                            data=json.dumps(request_body),
                            content_type='application/json')
 
-    """
-    finding newly created task
-    """
     task = Task.query.filter_by(id=status_id).first()
 
     assert response.status_code == 200
@@ -128,6 +125,17 @@ def test_delete(client, default_task):
     assert found_task.is_deleted
 
 
+def test_delete_when_item_deleted(client, default_task):
+    default_task.is_deleted = True
+    db.session.add(default_task)
+    db.session.commit()
+    response = client.delete("/tasks/%s" % default_task.id)
+    assert response.status_code == 422
+    assert response.get_json() == {
+        "errors": ["the task of id %s does not exist" % (default_task.id)]
+    }
+
+
 def test_put(client, default_task):
     status_id = default_task.status_id
 
@@ -142,9 +150,6 @@ def test_put(client, default_task):
                           data=json.dumps(request_body),
                           content_type="application/json")
 
-    """
-    testing that the response is correct
-    """
     assert response.status_code == 200
     assert response.get_json() == {
         "id": str(default_task.id),
@@ -160,9 +165,6 @@ def test_put(client, default_task):
         },
     }
 
-    """
-    testing that the record was updated correctly in the database
-    """
     found_task = Task.query.filter_by(id=default_task.id).first()
     assert found_task.content == "some new content"
     assert found_task.title == "new title"
@@ -186,4 +188,26 @@ def test_put_bad_status_id(client, default_task):
     assert response.status_code == 422
     assert response.get_json() == {
         "errors": ["status_id of %s is not valid" % status_id]
+    }
+
+
+def test_put_deleted_task(client, default_task):
+    default_task.is_deleted = True
+    db.session.add(default_task)
+    db.session.commit()
+
+    request_body = {
+        "content": "some new content",
+        "title": "new title",
+        "type": "task",
+        "status_id": str(default_task.status_id),
+    }
+
+    response = client.put("/tasks/%s" % (default_task.id),
+                          data=json.dumps(request_body),
+                          content_type="application/json")
+
+    assert response.status_code == 422
+    assert response.get_json() == {
+        "errors": ["the task of id %s does not exist" % default_task.id]
     }
